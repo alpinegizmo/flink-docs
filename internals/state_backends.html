@@ -24,7 +24,7 @@ under the License.
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Apache Flink 1.2-SNAPSHOT Documentation: Elasticsearch 2.x Connector</title>
+    <title>Apache Flink 1.2-SNAPSHOT Documentation: State and State Backends</title>
     <link rel="shortcut icon" href="https://alpinegizmo.github.io/flink-docs//page/favicon.ico" type="image/x-icon">
     <link rel="icon" href="https://alpinegizmo.github.io/flink-docs//page/favicon.ico" type="image/x-icon">
 
@@ -57,22 +57,6 @@ under the License.
 
 
 
-
-  
-    
-    
-    
-      
-    
-  
-
-  
-    
-    
-    
-      
-    
-  
 
   
     
@@ -288,7 +272,7 @@ under the License.
       
         
         
-<li><a href="#collapse-10" data-toggle="collapse" class="active"><i class="fa fa-code title maindish" aria-hidden="true"></i> Application Development</a><div class="collapse in" id="collapse-10"><ul>
+<li><a href="#collapse-10" data-toggle="collapse"><i class="fa fa-code title maindish" aria-hidden="true"></i> Application Development <i class="fa fa-caret-down pull-right" aria-hidden="true" style="padding-top: 4px"></i></a><div class="collapse" id="collapse-10"><ul>
   
         
         
@@ -548,7 +532,7 @@ under the License.
       
         
         
-<li><a href="#collapse-24" data-toggle="collapse" class="active">Streaming (DataStream API)</a><div class="collapse in" id="collapse-24"><ul>
+<li><a href="#collapse-24" data-toggle="collapse">Streaming (DataStream API) <i class="fa fa-caret-down pull-right" aria-hidden="true" style="padding-top: 4px"></i></a><div class="collapse" id="collapse-24"><ul>
   <li><a href="https://alpinegizmo.github.io/flink-docs//dev/datastream_api.html">Overview</a></li>
         
         
@@ -670,7 +654,7 @@ under the License.
       
         
         
-<li><a href="#collapse-30" data-toggle="collapse" class="active">Connectors</a><div class="collapse in" id="collapse-30"><ul>
+<li><a href="#collapse-30" data-toggle="collapse">Connectors <i class="fa fa-caret-down pull-right" aria-hidden="true" style="padding-top: 4px"></i></a><div class="collapse" id="collapse-30"><ul>
   <li><a href="https://alpinegizmo.github.io/flink-docs//dev/connectors/">Overview</a></li>
         
         
@@ -780,7 +764,7 @@ under the License.
 
     
     
-<li><a href="https://alpinegizmo.github.io/flink-docs//dev/connectors/elasticsearch2.html" class="active">Elasticsearch 2.x</a></li>
+<li><a href="https://alpinegizmo.github.io/flink-docs//dev/connectors/elasticsearch2.html">Elasticsearch 2.x</a></li>
     
   
 
@@ -2157,7 +2141,7 @@ under the License.
       
         
         
-<li><a href="#collapse-115" data-toggle="collapse"><i class="fa fa-book title dessert" aria-hidden="true"></i> Internals <i class="fa fa-caret-down pull-right" aria-hidden="true" style="padding-top: 4px"></i></a><div class="collapse" id="collapse-115"><ul>
+<li><a href="#collapse-115" data-toggle="collapse" class="active"><i class="fa fa-book title dessert" aria-hidden="true"></i> Internals</a><div class="collapse in" id="collapse-115"><ul>
   
         
         
@@ -2250,7 +2234,7 @@ under the License.
 
     
     
-<li><a href="https://alpinegizmo.github.io/flink-docs//internals/state_backends.html">State Backends</a></li>
+<li><a href="https://alpinegizmo.github.io/flink-docs//internals/state_backends.html" class="active">State Backends</a></li>
     
   
 
@@ -2334,22 +2318,6 @@ under the License.
     
     
       
-    
-  
-
-  
-  
-    
-    
-      
-    
-  
-
-  
-  
-    
-    
-      
 
 
 
@@ -2357,175 +2325,81 @@ under the License.
 
   
   
-    <li><i class="fa fa-code title maindish" aria-hidden="true"></i> Application Development</li>
+    <li><i class="fa fa-book title dessert" aria-hidden="true"></i> Internals</li>
   
 
   
   
-    <li><a href="https://alpinegizmo.github.io/flink-docs//dev/datastream_api.html">Streaming (DataStream API)</a></li>
-  
-
-  
-  
-    <li><a href="https://alpinegizmo.github.io/flink-docs//dev/connectors/">Connectors</a></li>
-  
-
-  
-  
-    <li class="active">Elasticsearch 2.x</li>
+    <li class="active">State Backends</li>
   
 
 </ol>
 
-<h1>Elasticsearch 2.x Connector</h1>
+<h1>State and State Backends</h1>
 
 
 
-<p>This connector provides a Sink that can write to an
-<a href="https://elastic.co/">Elasticsearch 2.x</a> Index. To use this connector, add the
-following dependency to your project:</p>
-
-<figure class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
-  <span class="nt">&lt;groupId&gt;</span>org.apache.flink<span class="nt">&lt;/groupId&gt;</span>
-  <span class="nt">&lt;artifactId&gt;</span>flink-connector-elasticsearch2_2.10<span class="nt">&lt;/artifactId&gt;</span>
-  <span class="nt">&lt;version&gt;</span>1.2-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
-<span class="nt">&lt;/dependency&gt;</span></code></pre></figure>
-
-<p>Note that the streaming connectors are currently not part of the binary
-distribution. See
-<a href="https://alpinegizmo.github.io/flink-docs//dev/linking">here</a>
-for information about how to package the program with the libraries for
-cluster execution.</p>
-
-<h4 id="installing-elasticsearch-2x">Installing Elasticsearch 2.x</h4>
-
-<p>Instructions for setting up an Elasticsearch cluster can be found
-<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/setup.html">here</a>.
-Make sure to set and remember a cluster name. This must be set when
-creating a Sink for writing to your cluster</p>
-
-<h4 id="elasticsearch-2x-sink">Elasticsearch 2.x Sink</h4>
-<p>The connector provides a Sink that can send data to an Elasticsearch 2.x Index.</p>
-
-<p>The sink communicates with Elasticsearch via Transport Client</p>
-
-<p>See <a href="https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/transport-client.html">here</a>
-for information about the Transport Client.</p>
-
-<p>The code below shows how to create a sink that uses a <code>TransportClient</code> for communication:</p>
-
-<div class="codetabs">
-  <div data-lang="java">
-
-    <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="n">File</span> <span class="n">dataDir</span> <span class="o">=</span> <span class="o">....;</span>
-
-<span class="n">DataStream</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">input</span> <span class="o">=</span> <span class="o">...;</span>
-
-<span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">config</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
-<span class="c1">// This instructs the sink to emit after every element, otherwise they would be buffered</span>
-<span class="n">config</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&quot;bulk.flush.max.actions&quot;</span><span class="o">,</span> <span class="s">&quot;1&quot;</span><span class="o">);</span>
-<span class="n">config</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&quot;cluster.name&quot;</span><span class="o">,</span> <span class="s">&quot;my-cluster-name&quot;</span><span class="o">);</span>
-
-<span class="n">List</span><span class="o">&lt;</span><span class="n">InetSocketAddress</span><span class="o">&gt;</span> <span class="n">transports</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
-<span class="n">transports</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="nf">InetSocketAddress</span><span class="o">(</span><span class="n">InetAddress</span><span class="o">.</span><span class="na">getByName</span><span class="o">(</span><span class="s">&quot;127.0.0.1&quot;</span><span class="o">),</span> <span class="mi">9300</span><span class="o">));</span>
-<span class="n">transports</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="nf">InetSocketAddress</span><span class="o">(</span><span class="n">InetAddress</span><span class="o">.</span><span class="na">getByName</span><span class="o">(</span><span class="s">&quot;10.2.3.1&quot;</span><span class="o">),</span> <span class="mi">9300</span><span class="o">));</span>
-
-<span class="n">input</span><span class="o">.</span><span class="na">addSink</span><span class="o">(</span><span class="k">new</span> <span class="nf">ElasticsearchSink</span><span class="o">(</span><span class="n">config</span><span class="o">,</span> <span class="n">transports</span><span class="o">,</span> <span class="k">new</span> <span class="n">ElasticsearchSinkFunction</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;()</span> <span class="o">{</span>
-  <span class="kd">public</span> <span class="n">IndexRequest</span> <span class="nf">createIndexRequest</span><span class="o">(</span><span class="n">String</span> <span class="n">element</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">json</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
-    <span class="n">json</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&quot;data&quot;</span><span class="o">,</span> <span class="n">element</span><span class="o">);</span>
-
-    <span class="k">return</span> <span class="n">Requests</span><span class="o">.</span><span class="na">indexRequest</span><span class="o">()</span>
-            <span class="o">.</span><span class="na">index</span><span class="o">(</span><span class="s">&quot;my-index&quot;</span><span class="o">)</span>
-            <span class="o">.</span><span class="na">type</span><span class="o">(</span><span class="s">&quot;my-type&quot;</span><span class="o">)</span>
-            <span class="o">.</span><span class="na">source</span><span class="o">(</span><span class="n">json</span><span class="o">);</span>
-  <span class="o">}</span>
-
-  <span class="nd">@Override</span>
-  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">process</span><span class="o">(</span><span class="n">String</span> <span class="n">element</span><span class="o">,</span> <span class="n">RuntimeContext</span> <span class="n">ctx</span><span class="o">,</span> <span class="n">RequestIndexer</span> <span class="n">indexer</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">indexer</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">createIndexRequest</span><span class="o">(</span><span class="n">element</span><span class="o">));</span>
-  <span class="o">}</span>
-<span class="o">}));</span></code></pre></figure>
-
-  </div>
-  <div data-lang="scala">
-
-    <figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">dataDir</span> <span class="k">=</span> <span class="o">....;</span>
-
-<span class="k">val</span> <span class="n">input</span><span class="k">:</span> <span class="kt">DataStream</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">...</span>
-
-<span class="k">val</span> <span class="n">config</span> <span class="k">=</span> <span class="k">new</span> <span class="n">util</span><span class="o">.</span><span class="nc">HashMap</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">String</span><span class="o">]</span>
-<span class="n">config</span><span class="o">.</span><span class="n">put</span><span class="o">(</span><span class="s">&quot;bulk.flush.max.actions&quot;</span><span class="o">,</span> <span class="s">&quot;1&quot;</span><span class="o">)</span>
-<span class="n">config</span><span class="o">.</span><span class="n">put</span><span class="o">(</span><span class="s">&quot;cluster.name&quot;</span><span class="o">,</span> <span class="s">&quot;my-cluster-name&quot;</span><span class="o">)</span>
-
-<span class="k">val</span> <span class="n">transports</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
-<span class="n">transports</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="k">new</span> <span class="nc">InetSocketAddress</span><span class="o">(</span><span class="nc">InetAddress</span><span class="o">.</span><span class="n">getByName</span><span class="o">(</span><span class="s">&quot;127.0.0.1&quot;</span><span class="o">),</span> <span class="mi">9300</span><span class="o">))</span>
-<span class="n">transports</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="k">new</span> <span class="nc">InetSocketAddress</span><span class="o">(</span><span class="nc">InetAddress</span><span class="o">.</span><span class="n">getByName</span><span class="o">(</span><span class="s">&quot;10.2.3.1&quot;</span><span class="o">),</span> <span class="mi">9300</span><span class="o">));</span>
-
-<span class="n">input</span><span class="o">.</span><span class="n">addSink</span><span class="o">(</span><span class="k">new</span> <span class="nc">ElasticsearchSink</span><span class="o">(</span><span class="n">config</span><span class="o">,</span> <span class="n">transports</span><span class="o">,</span> <span class="k">new</span> <span class="nc">ElasticsearchSinkFunction</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">createIndexRequest</span><span class="o">(</span><span class="n">element</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">IndexRequest</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">json</span> <span class="k">=</span> <span class="k">new</span> <span class="n">util</span><span class="o">.</span><span class="nc">HashMap</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">AnyRef</span><span class="o">]</span>
-    <span class="n">json</span><span class="o">.</span><span class="n">put</span><span class="o">(</span><span class="s">&quot;data&quot;</span><span class="o">,</span> <span class="n">element</span><span class="o">)</span>
-    <span class="nc">Requests</span><span class="o">.</span><span class="n">indexRequest</span><span class="o">.</span><span class="n">index</span><span class="o">(</span><span class="s">&quot;my-index&quot;</span><span class="o">).</span><span class="n">`type`</span><span class="o">(</span><span class="s">&quot;my-type&quot;</span><span class="o">).</span><span class="n">source</span><span class="o">(</span><span class="n">json</span><span class="o">)</span>
-  <span class="o">}</span>
-
-  <span class="k">override</span> <span class="k">def</span> <span class="n">process</span><span class="o">(</span><span class="n">element</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">ctx</span><span class="k">:</span> <span class="kt">RuntimeContext</span><span class="o">,</span> <span class="n">indexer</span><span class="k">:</span> <span class="kt">RequestIndexer</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">indexer</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="n">createIndexRequest</span><span class="o">(</span><span class="n">element</span><span class="o">))</span>
-  <span class="o">}</span>
-<span class="o">}))</span></code></pre></figure>
-
-  </div>
-</div>
-
-<p>A Map of Strings is used to configure the Sink. The configuration keys
-are documented in the Elasticsearch documentation
-<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html">here</a>.
-Especially important is the <code>cluster.name</code>. parameter that must correspond to
-the name of your cluster and with ElasticSearch 2x you also need to specify <code>path.home</code>.</p>
-
-<p>Internally, the sink uses a <code>BulkProcessor</code> to send Action requests to the cluster.
-This will buffer elements and Action Requests before sending to the cluster. The behaviour of the
-<code>BulkProcessor</code> can be configured using these config keys:</p>
-<ul>
-  <li><strong>bulk.flush.max.actions</strong>: Maximum amount of elements to buffer</li>
-  <li><strong>bulk.flush.max.size.mb</strong>: Maximum amount of data (in megabytes) to buffer</li>
-  <li><strong>bulk.flush.interval.ms</strong>: Interval at which to flush data regardless of the other two
-  settings in milliseconds</li>
+<ul id="markdown-toc">
+  <li><a href="#keyed-state-and-operator-state" id="markdown-toc-keyed-state-and-operator-state">Keyed State and Operator state</a></li>
+  <li><a href="#raw-and-managed-state" id="markdown-toc-raw-and-managed-state">Raw and Managed State</a></li>
+  <li><a href="#checkpointing-procedure" id="markdown-toc-checkpointing-procedure">Checkpointing Procedure</a></li>
 </ul>
 
-<p>This now provides a list of Elasticsearch Nodes
-to which the sink should connect via a <code>TransportClient</code>.</p>
+<p><strong>NOTE</strong> This document is only a sketch of some bullet points, to be fleshed out.</p>
 
-<p>More information about Elasticsearch can be found <a href="https://elastic.co">here</a>.</p>
+<p><strong>NOTE</strong> The structure of State Backends changed heavily between version 1.1 and 1.2. This documentation is only applicable
+to Apache Flink version 1.2 and later.</p>
 
-<h4 id="packaging-the-elasticsearch-connector-into-an-uber-jar">Packaging the Elasticsearch Connector into an Uber-jar</h4>
+<h2 id="keyed-state-and-operator-state">Keyed State and Operator state</h2>
 
-<p>For the execution of your Flink program,
-it is recommended to build a so-called uber-jar (executable jar) containing all your dependencies
-(see <a href="https://alpinegizmo.github.io/flink-docs//dev/linking">here</a> for further information).</p>
+<p>There are two basic state backends: <code>Keyed State</code> and <code>Operator State</code>.</p>
 
-<p>However,
-when an uber-jar containing an Elasticsearch sink is executed,
-an <code>IllegalArgumentException</code> may occur,
-which is caused by conflicting files of Elasticsearch and it’s dependencies
-in <code>META-INF/services</code>:</p>
+<h4 id="keyed-state">Keyed State</h4>
 
-<div class="highlight"><pre><code>IllegalArgumentException[An SPI class of type org.apache.lucene.codecs.PostingsFormat with name 'Lucene50' does not exist.  You need to add the corresponding JAR file supporting this SPI to your classpath.  The current classpath supports the following names: [es090, completion090, XBloomFilter]]
-</code></pre></div>
+<p><em>Keyed State</em> is always relative to keys and can only be used in functions and operator on a <code>KeyedStream</code>.
+Examples of keyed state are the <code>ValueState</code> or <code>ListState</code> that one can create in a function on a <code>KeyedStream</code>, as
+well at the state of a keyed window operator.</p>
 
-<p>If the uber-jar is build by means of maven,
-this issue can be avoided by adding the following bits to the pom file:</p>
+<p>Keyed State is organized in so called <em>Key Groups</em>. Key Groups are the unit in which keyed state can be redistributed and
+there are as many key groups as the defined maximum parallelism.
+During execution, each parallel instance of an operator gets one or more key groups.</p>
 
-<div class="highlight"><pre><code>&lt;transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer"&gt;
-    &lt;resource&gt;META-INF/services/org.apache.lucene.codecs.Codec&lt;/resource&gt;
-&lt;/transformer&gt;
-&lt;transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer"&gt;
-    &lt;resource&gt;META-INF/services/org.apache.lucene.codecs.DocValuesFormat&lt;/resource&gt;
-&lt;/transformer&gt;
-&lt;transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer"&gt;
-   &lt;resource&gt;META-INF/services/org.apache.lucene.codecs.PostingsFormat&lt;/resource&gt;
-&lt;/transformer&gt;
-</code></pre></div>
+<h4 id="operator-state">Operator State</h4>
+
+<p><em>Operator State</em> is state per parallel subtask. It subsume the <code>Checkpointed</code> interface in Flink 1.0 and Flink 1.1.
+The new <code>CheckpointedFunction</code> interface is basically a shortcut (syntactic sugar) for the Operator State.</p>
+
+<p>Operator State needs special re-distribution schemes when parallelism is changed. There can be different variations of such
+schemes, out of which the following are currently defined:</p>
+
+<ul>
+  <li><strong>List-style redistribution:</strong> Each operator returns a List of state elements. The whole state is logically a concatenation of
+all lists. On restore/redistribution, the list is evenly divided into as many sublists as there are parallel operators.
+Each operator gets a sublist, which can be empty, or contain one or more elements.</li>
+</ul>
+
+<h2 id="raw-and-managed-state">Raw and Managed State</h2>
+
+<p><em>Keyed State</em> and <em>Operator State</em> exist in two forms: <em>managed</em> and <em>raw</em>.</p>
+
+<p><em>Managed State</em> is represented in data structured controlled by the Flink runtime, such as internal hash tables, or RocksDB.
+Examples are the “ValueState”, “ListState”, etc. Flink’s runtime encodes the states and writes them into the checkpoints.</p>
+
+<p><em>Raw State</em> is state that users and operators keep in their own data structures. Upon checkpoints, they only write a sequence or bytes into
+the checkpoint. Flink knows nothing about the state’s data structures and sees only the raw bytes.</p>
+
+<h2 id="checkpointing-procedure">Checkpointing Procedure</h2>
+
+<p>When operator snapshots are takes, there are two parts: The <strong>synchronous</strong> and the <strong>asynchronous</strong> part.</p>
+
+<p>Operators and state backends provide their snapshots as a Java <code>FutureTask</code>. That task contains the state where tte <em>synchronous</em> part
+is completed and the <em>asynchronous</em> part is pending. The asynchronous part is then executed by a background thread for that checkpoint.</p>
+
+<p>Operators that checkpoint purely synchronous return an already completed <code>FutureTask</code>.
+If an asynchronous operation needs to be performed, it is executed in the <code>run()</code> method of that <code>FutureTask</code>.</p>
+
+<p>The tasks are canceleable, in order to release streams and other resource consuming handles.</p>
+
 
 
         </div>

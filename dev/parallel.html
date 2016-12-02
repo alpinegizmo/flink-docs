@@ -24,7 +24,7 @@ under the License.
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Apache Flink 1.2-SNAPSHOT Documentation: Elasticsearch 2.x Connector</title>
+    <title>Apache Flink 1.2-SNAPSHOT Documentation: Parallel Execution</title>
     <link rel="shortcut icon" href="https://alpinegizmo.github.io/flink-docs//page/favicon.ico" type="image/x-icon">
     <link rel="icon" href="https://alpinegizmo.github.io/flink-docs//page/favicon.ico" type="image/x-icon">
 
@@ -57,14 +57,6 @@ under the License.
 
 
 
-
-  
-    
-    
-    
-      
-    
-  
 
   
     
@@ -548,7 +540,7 @@ under the License.
       
         
         
-<li><a href="#collapse-24" data-toggle="collapse" class="active">Streaming (DataStream API)</a><div class="collapse in" id="collapse-24"><ul>
+<li><a href="#collapse-24" data-toggle="collapse">Streaming (DataStream API) <i class="fa fa-caret-down pull-right" aria-hidden="true" style="padding-top: 4px"></i></a><div class="collapse" id="collapse-24"><ul>
   <li><a href="https://alpinegizmo.github.io/flink-docs//dev/datastream_api.html">Overview</a></li>
         
         
@@ -670,7 +662,7 @@ under the License.
       
         
         
-<li><a href="#collapse-30" data-toggle="collapse" class="active">Connectors</a><div class="collapse in" id="collapse-30"><ul>
+<li><a href="#collapse-30" data-toggle="collapse">Connectors <i class="fa fa-caret-down pull-right" aria-hidden="true" style="padding-top: 4px"></i></a><div class="collapse" id="collapse-30"><ul>
   <li><a href="https://alpinegizmo.github.io/flink-docs//dev/connectors/">Overview</a></li>
         
         
@@ -780,7 +772,7 @@ under the License.
 
     
     
-<li><a href="https://alpinegizmo.github.io/flink-docs//dev/connectors/elasticsearch2.html" class="active">Elasticsearch 2.x</a></li>
+<li><a href="https://alpinegizmo.github.io/flink-docs//dev/connectors/elasticsearch2.html">Elasticsearch 2.x</a></li>
     
   
 
@@ -1174,7 +1166,7 @@ under the License.
       
         
         
-<li><a href="#collapse-59" data-toggle="collapse">Managing Execution <i class="fa fa-caret-down pull-right" aria-hidden="true" style="padding-top: 4px"></i></a><div class="collapse" id="collapse-59"><ul>
+<li><a href="#collapse-59" data-toggle="collapse" class="active">Managing Execution</a><div class="collapse in" id="collapse-59"><ul>
   
         
         
@@ -1233,7 +1225,7 @@ under the License.
 
     
     
-<li><a href="https://alpinegizmo.github.io/flink-docs//dev/parallel.html">Parallel Execution</a></li>
+<li><a href="https://alpinegizmo.github.io/flink-docs//dev/parallel.html" class="active">Parallel Execution</a></li>
     
   
 
@@ -2342,14 +2334,6 @@ under the License.
     
     
       
-    
-  
-
-  
-  
-    
-    
-      
 
 
 
@@ -2362,170 +2346,167 @@ under the License.
 
   
   
-    <li><a href="https://alpinegizmo.github.io/flink-docs//dev/datastream_api.html">Streaming (DataStream API)</a></li>
+    <li>Managing Execution</li>
   
 
   
   
-    <li><a href="https://alpinegizmo.github.io/flink-docs//dev/connectors/">Connectors</a></li>
-  
-
-  
-  
-    <li class="active">Elasticsearch 2.x</li>
+    <li class="active">Parallel Execution</li>
   
 
 </ol>
 
-<h1>Elasticsearch 2.x Connector</h1>
+<h1>Parallel Execution</h1>
 
 
 
-<p>This connector provides a Sink that can write to an
-<a href="https://elastic.co/">Elasticsearch 2.x</a> Index. To use this connector, add the
-following dependency to your project:</p>
+<p>This section describes how the parallel execution of programs can be configured in Flink. A Flink
+program consists of multiple tasks (transformations/operators, data sources, and sinks). A task is split into
+several parallel instances for execution and each parallel instance processes a subset of the task’s
+input data. The number of parallel instances of a task is called its <em>parallelism</em>.</p>
 
-<figure class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
-  <span class="nt">&lt;groupId&gt;</span>org.apache.flink<span class="nt">&lt;/groupId&gt;</span>
-  <span class="nt">&lt;artifactId&gt;</span>flink-connector-elasticsearch2_2.10<span class="nt">&lt;/artifactId&gt;</span>
-  <span class="nt">&lt;version&gt;</span>1.2-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
-<span class="nt">&lt;/dependency&gt;</span></code></pre></figure>
+<p>The parallelism of a task can be specified in Flink on different levels.</p>
 
-<p>Note that the streaming connectors are currently not part of the binary
-distribution. See
-<a href="https://alpinegizmo.github.io/flink-docs//dev/linking">here</a>
-for information about how to package the program with the libraries for
-cluster execution.</p>
+<h2 id="operator-level">Operator Level</h2>
 
-<h4 id="installing-elasticsearch-2x">Installing Elasticsearch 2.x</h4>
-
-<p>Instructions for setting up an Elasticsearch cluster can be found
-<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/setup.html">here</a>.
-Make sure to set and remember a cluster name. This must be set when
-creating a Sink for writing to your cluster</p>
-
-<h4 id="elasticsearch-2x-sink">Elasticsearch 2.x Sink</h4>
-<p>The connector provides a Sink that can send data to an Elasticsearch 2.x Index.</p>
-
-<p>The sink communicates with Elasticsearch via Transport Client</p>
-
-<p>See <a href="https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/transport-client.html">here</a>
-for information about the Transport Client.</p>
-
-<p>The code below shows how to create a sink that uses a <code>TransportClient</code> for communication:</p>
+<p>The parallelism of an individual operator, data source, or data sink can be defined by calling its
+<code>setParallelism()</code> method.  For example, like this:</p>
 
 <div class="codetabs">
   <div data-lang="java">
 
-    <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="n">File</span> <span class="n">dataDir</span> <span class="o">=</span> <span class="o">....;</span>
+    <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">final</span> <span class="n">StreamExecutionEnvironment</span> <span class="n">env</span> <span class="o">=</span> <span class="n">StreamExecutionEnvironment</span><span class="o">.</span><span class="na">getExecutionEnvironment</span><span class="o">();</span>
 
-<span class="n">DataStream</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">input</span> <span class="o">=</span> <span class="o">...;</span>
+<span class="n">DataStream</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">text</span> <span class="o">=</span> <span class="o">[...]</span>
+<span class="n">DataStream</span><span class="o">&lt;</span><span class="n">Tuple2</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;&gt;</span> <span class="n">wordCounts</span> <span class="o">=</span> <span class="n">text</span>
+    <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="k">new</span> <span class="nf">LineSplitter</span><span class="o">())</span>
+    <span class="o">.</span><span class="na">keyBy</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">timeWindow</span><span class="o">(</span><span class="n">Time</span><span class="o">.</span><span class="na">seconds</span><span class="o">(</span><span class="mi">5</span><span class="o">))</span>
+    <span class="o">.</span><span class="na">sum</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="na">setParallelism</span><span class="o">(</span><span class="mi">5</span><span class="o">);</span>
 
-<span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">config</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
-<span class="c1">// This instructs the sink to emit after every element, otherwise they would be buffered</span>
-<span class="n">config</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&quot;bulk.flush.max.actions&quot;</span><span class="o">,</span> <span class="s">&quot;1&quot;</span><span class="o">);</span>
-<span class="n">config</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&quot;cluster.name&quot;</span><span class="o">,</span> <span class="s">&quot;my-cluster-name&quot;</span><span class="o">);</span>
+<span class="n">wordCounts</span><span class="o">.</span><span class="na">print</span><span class="o">();</span>
 
-<span class="n">List</span><span class="o">&lt;</span><span class="n">InetSocketAddress</span><span class="o">&gt;</span> <span class="n">transports</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
-<span class="n">transports</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="nf">InetSocketAddress</span><span class="o">(</span><span class="n">InetAddress</span><span class="o">.</span><span class="na">getByName</span><span class="o">(</span><span class="s">&quot;127.0.0.1&quot;</span><span class="o">),</span> <span class="mi">9300</span><span class="o">));</span>
-<span class="n">transports</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="nf">InetSocketAddress</span><span class="o">(</span><span class="n">InetAddress</span><span class="o">.</span><span class="na">getByName</span><span class="o">(</span><span class="s">&quot;10.2.3.1&quot;</span><span class="o">),</span> <span class="mi">9300</span><span class="o">));</span>
-
-<span class="n">input</span><span class="o">.</span><span class="na">addSink</span><span class="o">(</span><span class="k">new</span> <span class="nf">ElasticsearchSink</span><span class="o">(</span><span class="n">config</span><span class="o">,</span> <span class="n">transports</span><span class="o">,</span> <span class="k">new</span> <span class="n">ElasticsearchSinkFunction</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;()</span> <span class="o">{</span>
-  <span class="kd">public</span> <span class="n">IndexRequest</span> <span class="nf">createIndexRequest</span><span class="o">(</span><span class="n">String</span> <span class="n">element</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">json</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
-    <span class="n">json</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&quot;data&quot;</span><span class="o">,</span> <span class="n">element</span><span class="o">);</span>
-
-    <span class="k">return</span> <span class="n">Requests</span><span class="o">.</span><span class="na">indexRequest</span><span class="o">()</span>
-            <span class="o">.</span><span class="na">index</span><span class="o">(</span><span class="s">&quot;my-index&quot;</span><span class="o">)</span>
-            <span class="o">.</span><span class="na">type</span><span class="o">(</span><span class="s">&quot;my-type&quot;</span><span class="o">)</span>
-            <span class="o">.</span><span class="na">source</span><span class="o">(</span><span class="n">json</span><span class="o">);</span>
-  <span class="o">}</span>
-
-  <span class="nd">@Override</span>
-  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">process</span><span class="o">(</span><span class="n">String</span> <span class="n">element</span><span class="o">,</span> <span class="n">RuntimeContext</span> <span class="n">ctx</span><span class="o">,</span> <span class="n">RequestIndexer</span> <span class="n">indexer</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">indexer</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">createIndexRequest</span><span class="o">(</span><span class="n">element</span><span class="o">));</span>
-  <span class="o">}</span>
-<span class="o">}));</span></code></pre></figure>
+<span class="n">env</span><span class="o">.</span><span class="na">execute</span><span class="o">(</span><span class="s">&quot;Word Count Example&quot;</span><span class="o">);</span></code></pre></figure>
 
   </div>
   <div data-lang="scala">
 
-    <figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">dataDir</span> <span class="k">=</span> <span class="o">....;</span>
+    <figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">env</span> <span class="k">=</span> <span class="nc">StreamExecutionEnvironment</span><span class="o">.</span><span class="n">getExecutionEnvironment</span>
 
-<span class="k">val</span> <span class="n">input</span><span class="k">:</span> <span class="kt">DataStream</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">...</span>
+<span class="k">val</span> <span class="n">text</span> <span class="k">=</span> <span class="o">[</span><span class="kt">...</span><span class="o">]</span>
+<span class="k">val</span> <span class="n">wordCounts</span> <span class="k">=</span> <span class="n">text</span>
+    <span class="o">.</span><span class="n">flatMap</span><span class="o">{</span> <span class="k">_</span><span class="o">.</span><span class="n">split</span><span class="o">(</span><span class="s">&quot; &quot;</span><span class="o">)</span> <span class="n">map</span> <span class="o">{</span> <span class="o">(</span><span class="k">_</span><span class="o">,</span> <span class="mi">1</span><span class="o">)</span> <span class="o">}</span> <span class="o">}</span>
+    <span class="o">.</span><span class="n">keyBy</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span>
+    <span class="o">.</span><span class="n">timeWindow</span><span class="o">(</span><span class="nc">Time</span><span class="o">.</span><span class="n">seconds</span><span class="o">(</span><span class="mi">5</span><span class="o">))</span>
+    <span class="o">.</span><span class="n">sum</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="n">setParallelism</span><span class="o">(</span><span class="mi">5</span><span class="o">)</span>
+<span class="n">wordCounts</span><span class="o">.</span><span class="n">print</span><span class="o">()</span>
 
-<span class="k">val</span> <span class="n">config</span> <span class="k">=</span> <span class="k">new</span> <span class="n">util</span><span class="o">.</span><span class="nc">HashMap</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">String</span><span class="o">]</span>
-<span class="n">config</span><span class="o">.</span><span class="n">put</span><span class="o">(</span><span class="s">&quot;bulk.flush.max.actions&quot;</span><span class="o">,</span> <span class="s">&quot;1&quot;</span><span class="o">)</span>
-<span class="n">config</span><span class="o">.</span><span class="n">put</span><span class="o">(</span><span class="s">&quot;cluster.name&quot;</span><span class="o">,</span> <span class="s">&quot;my-cluster-name&quot;</span><span class="o">)</span>
-
-<span class="k">val</span> <span class="n">transports</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
-<span class="n">transports</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="k">new</span> <span class="nc">InetSocketAddress</span><span class="o">(</span><span class="nc">InetAddress</span><span class="o">.</span><span class="n">getByName</span><span class="o">(</span><span class="s">&quot;127.0.0.1&quot;</span><span class="o">),</span> <span class="mi">9300</span><span class="o">))</span>
-<span class="n">transports</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="k">new</span> <span class="nc">InetSocketAddress</span><span class="o">(</span><span class="nc">InetAddress</span><span class="o">.</span><span class="n">getByName</span><span class="o">(</span><span class="s">&quot;10.2.3.1&quot;</span><span class="o">),</span> <span class="mi">9300</span><span class="o">));</span>
-
-<span class="n">input</span><span class="o">.</span><span class="n">addSink</span><span class="o">(</span><span class="k">new</span> <span class="nc">ElasticsearchSink</span><span class="o">(</span><span class="n">config</span><span class="o">,</span> <span class="n">transports</span><span class="o">,</span> <span class="k">new</span> <span class="nc">ElasticsearchSinkFunction</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">createIndexRequest</span><span class="o">(</span><span class="n">element</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">IndexRequest</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">json</span> <span class="k">=</span> <span class="k">new</span> <span class="n">util</span><span class="o">.</span><span class="nc">HashMap</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">AnyRef</span><span class="o">]</span>
-    <span class="n">json</span><span class="o">.</span><span class="n">put</span><span class="o">(</span><span class="s">&quot;data&quot;</span><span class="o">,</span> <span class="n">element</span><span class="o">)</span>
-    <span class="nc">Requests</span><span class="o">.</span><span class="n">indexRequest</span><span class="o">.</span><span class="n">index</span><span class="o">(</span><span class="s">&quot;my-index&quot;</span><span class="o">).</span><span class="n">`type`</span><span class="o">(</span><span class="s">&quot;my-type&quot;</span><span class="o">).</span><span class="n">source</span><span class="o">(</span><span class="n">json</span><span class="o">)</span>
-  <span class="o">}</span>
-
-  <span class="k">override</span> <span class="k">def</span> <span class="n">process</span><span class="o">(</span><span class="n">element</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">ctx</span><span class="k">:</span> <span class="kt">RuntimeContext</span><span class="o">,</span> <span class="n">indexer</span><span class="k">:</span> <span class="kt">RequestIndexer</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">indexer</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="n">createIndexRequest</span><span class="o">(</span><span class="n">element</span><span class="o">))</span>
-  <span class="o">}</span>
-<span class="o">}))</span></code></pre></figure>
+<span class="n">env</span><span class="o">.</span><span class="n">execute</span><span class="o">(</span><span class="s">&quot;Word Count Example&quot;</span><span class="o">)</span></code></pre></figure>
 
   </div>
 </div>
 
-<p>A Map of Strings is used to configure the Sink. The configuration keys
-are documented in the Elasticsearch documentation
-<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html">here</a>.
-Especially important is the <code>cluster.name</code>. parameter that must correspond to
-the name of your cluster and with ElasticSearch 2x you also need to specify <code>path.home</code>.</p>
+<h2 id="execution-environment-level">Execution Environment Level</h2>
 
-<p>Internally, the sink uses a <code>BulkProcessor</code> to send Action requests to the cluster.
-This will buffer elements and Action Requests before sending to the cluster. The behaviour of the
-<code>BulkProcessor</code> can be configured using these config keys:</p>
-<ul>
-  <li><strong>bulk.flush.max.actions</strong>: Maximum amount of elements to buffer</li>
-  <li><strong>bulk.flush.max.size.mb</strong>: Maximum amount of data (in megabytes) to buffer</li>
-  <li><strong>bulk.flush.interval.ms</strong>: Interval at which to flush data regardless of the other two
-  settings in milliseconds</li>
-</ul>
+<p>As mentioned <a href="#anatomy-of-a-flink-program">here</a> Flink programs are executed in the context
+of an execution environment. An
+execution environment defines a default parallelism for all operators, data sources, and data sinks
+it executes. Execution environment parallelism can be overwritten by explicitly configuring the
+parallelism of an operator.</p>
 
-<p>This now provides a list of Elasticsearch Nodes
-to which the sink should connect via a <code>TransportClient</code>.</p>
+<p>The default parallelism of an execution environment can be specified by calling the
+<code>setParallelism()</code> method. To execute all operators, data sources, and data sinks with a parallelism
+of <code>3</code>, set the default parallelism of the execution environment as follows:</p>
 
-<p>More information about Elasticsearch can be found <a href="https://elastic.co">here</a>.</p>
+<div class="codetabs">
+  <div data-lang="java">
 
-<h4 id="packaging-the-elasticsearch-connector-into-an-uber-jar">Packaging the Elasticsearch Connector into an Uber-jar</h4>
+    <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">final</span> <span class="n">StreamExecutionEnvironment</span> <span class="n">env</span> <span class="o">=</span> <span class="n">StreamExecutionEnvironment</span><span class="o">.</span><span class="na">getExecutionEnvironment</span><span class="o">();</span>
+<span class="n">env</span><span class="o">.</span><span class="na">setParallelism</span><span class="o">(</span><span class="mi">3</span><span class="o">);</span>
 
-<p>For the execution of your Flink program,
-it is recommended to build a so-called uber-jar (executable jar) containing all your dependencies
-(see <a href="https://alpinegizmo.github.io/flink-docs//dev/linking">here</a> for further information).</p>
+<span class="n">DataStream</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">text</span> <span class="o">=</span> <span class="o">[...]</span>
+<span class="n">DataStream</span><span class="o">&lt;</span><span class="n">Tuple2</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;&gt;</span> <span class="n">wordCounts</span> <span class="o">=</span> <span class="o">[...]</span>
+<span class="n">wordCounts</span><span class="o">.</span><span class="na">print</span><span class="o">();</span>
 
-<p>However,
-when an uber-jar containing an Elasticsearch sink is executed,
-an <code>IllegalArgumentException</code> may occur,
-which is caused by conflicting files of Elasticsearch and it’s dependencies
-in <code>META-INF/services</code>:</p>
+<span class="n">env</span><span class="o">.</span><span class="na">execute</span><span class="o">(</span><span class="s">&quot;Word Count Example&quot;</span><span class="o">);</span></code></pre></figure>
 
-<div class="highlight"><pre><code>IllegalArgumentException[An SPI class of type org.apache.lucene.codecs.PostingsFormat with name 'Lucene50' does not exist.  You need to add the corresponding JAR file supporting this SPI to your classpath.  The current classpath supports the following names: [es090, completion090, XBloomFilter]]
+  </div>
+  <div data-lang="scala">
+
+    <figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">env</span> <span class="k">=</span> <span class="nc">StreamExecutionEnvironment</span><span class="o">.</span><span class="n">getExecutionEnvironment</span>
+<span class="n">env</span><span class="o">.</span><span class="n">setParallelism</span><span class="o">(</span><span class="mi">3</span><span class="o">)</span>
+
+<span class="k">val</span> <span class="n">text</span> <span class="k">=</span> <span class="o">[</span><span class="kt">...</span><span class="o">]</span>
+<span class="k">val</span> <span class="n">wordCounts</span> <span class="k">=</span> <span class="n">text</span>
+    <span class="o">.</span><span class="n">flatMap</span><span class="o">{</span> <span class="k">_</span><span class="o">.</span><span class="n">split</span><span class="o">(</span><span class="s">&quot; &quot;</span><span class="o">)</span> <span class="n">map</span> <span class="o">{</span> <span class="o">(</span><span class="k">_</span><span class="o">,</span> <span class="mi">1</span><span class="o">)</span> <span class="o">}</span> <span class="o">}</span>
+    <span class="o">.</span><span class="n">keyBy</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span>
+    <span class="o">.</span><span class="n">timeWindow</span><span class="o">(</span><span class="nc">Time</span><span class="o">.</span><span class="n">seconds</span><span class="o">(</span><span class="mi">5</span><span class="o">))</span>
+    <span class="o">.</span><span class="n">sum</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
+<span class="n">wordCounts</span><span class="o">.</span><span class="n">print</span><span class="o">()</span>
+
+<span class="n">env</span><span class="o">.</span><span class="n">execute</span><span class="o">(</span><span class="s">&quot;Word Count Example&quot;</span><span class="o">)</span></code></pre></figure>
+
+  </div>
+</div>
+
+<h2 id="client-level">Client Level</h2>
+
+<p>The parallelism can be set at the Client when submitting jobs to Flink. The
+Client can either be a Java or a Scala program. One example of such a Client is
+Flink’s Command-line Interface (CLI).</p>
+
+<p>For the CLI client, the parallelism parameter can be specified with <code>-p</code>. For
+example:</p>
+
+<div class="highlight"><pre><code>./bin/flink run -p 10 ../examples/*WordCount-java*.jar
 </code></pre></div>
 
-<p>If the uber-jar is build by means of maven,
-this issue can be avoided by adding the following bits to the pom file:</p>
+<p>In a Java/Scala program, the parallelism is set as follows:</p>
 
-<div class="highlight"><pre><code>&lt;transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer"&gt;
-    &lt;resource&gt;META-INF/services/org.apache.lucene.codecs.Codec&lt;/resource&gt;
-&lt;/transformer&gt;
-&lt;transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer"&gt;
-    &lt;resource&gt;META-INF/services/org.apache.lucene.codecs.DocValuesFormat&lt;/resource&gt;
-&lt;/transformer&gt;
-&lt;transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer"&gt;
-   &lt;resource&gt;META-INF/services/org.apache.lucene.codecs.PostingsFormat&lt;/resource&gt;
-&lt;/transformer&gt;
-</code></pre></div>
+<div class="codetabs">
+  <div data-lang="java">
+
+    <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="k">try</span> <span class="o">{</span>
+    <span class="n">PackagedProgram</span> <span class="n">program</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">PackagedProgram</span><span class="o">(</span><span class="n">file</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+    <span class="n">InetSocketAddress</span> <span class="n">jobManagerAddress</span> <span class="o">=</span> <span class="n">RemoteExecutor</span><span class="o">.</span><span class="na">getInetFromHostport</span><span class="o">(</span><span class="s">&quot;localhost:6123&quot;</span><span class="o">);</span>
+    <span class="n">Configuration</span> <span class="n">config</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">Configuration</span><span class="o">();</span>
+
+    <span class="n">Client</span> <span class="n">client</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">Client</span><span class="o">(</span><span class="n">jobManagerAddress</span><span class="o">,</span> <span class="n">config</span><span class="o">,</span> <span class="n">program</span><span class="o">.</span><span class="na">getUserCodeClassLoader</span><span class="o">());</span>
+
+    <span class="c1">// set the parallelism to 10 here</span>
+    <span class="n">client</span><span class="o">.</span><span class="na">run</span><span class="o">(</span><span class="n">program</span><span class="o">,</span> <span class="mi">10</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+
+<span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">ProgramInvocationException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+<span class="o">}</span></code></pre></figure>
+
+  </div>
+  <div data-lang="scala">
+
+    <figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">try</span> <span class="o">{</span>
+    <span class="nc">PackagedProgram</span> <span class="n">program</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">PackagedProgram</span><span class="o">(</span><span class="n">file</span><span class="o">,</span> <span class="n">args</span><span class="o">)</span>
+    <span class="nc">InetSocketAddress</span> <span class="n">jobManagerAddress</span> <span class="k">=</span> <span class="nc">RemoteExecutor</span><span class="o">.</span><span class="n">getInetFromHostport</span><span class="o">(</span><span class="s">&quot;localhost:6123&quot;</span><span class="o">)</span>
+    <span class="nc">Configuration</span> <span class="n">config</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Configuration</span><span class="o">()</span>
+
+    <span class="nc">Client</span> <span class="n">client</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Client</span><span class="o">(</span><span class="n">jobManagerAddress</span><span class="o">,</span> <span class="k">new</span> <span class="nc">Configuration</span><span class="o">(),</span> <span class="n">program</span><span class="o">.</span><span class="n">getUserCodeClassLoader</span><span class="o">())</span>
+
+    <span class="c1">// set the parallelism to 10 here</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">run</span><span class="o">(</span><span class="n">program</span><span class="o">,</span> <span class="mi">10</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span>
+
+<span class="o">}</span> <span class="k">catch</span> <span class="o">{</span>
+    <span class="k">case</span> <span class="n">e</span><span class="k">:</span> <span class="kt">Exception</span> <span class="o">=&gt;</span> <span class="n">e</span><span class="o">.</span><span class="n">printStackTrace</span>
+<span class="o">}</span></code></pre></figure>
+
+  </div>
+</div>
+
+<h2 id="system-level">System Level</h2>
+
+<p>A system-wide default parallelism for all execution environments can be defined by setting the
+<code>parallelism.default</code> property in <code>./conf/flink-conf.yaml</code>. See the
+<a href="https://alpinegizmo.github.io/flink-docs//setup/config.html">Configuration</a> documentation for details.</p>
+
+<p><a href="#top" class="top pull-right"><span class="glyphicon glyphicon-chevron-up"></span> Back to top</a></p>
 
 
         </div>

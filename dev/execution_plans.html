@@ -24,7 +24,7 @@ under the License.
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Apache Flink 1.2-SNAPSHOT Documentation: Elasticsearch 2.x Connector</title>
+    <title>Apache Flink 1.2-SNAPSHOT Documentation: Execution Plans</title>
     <link rel="shortcut icon" href="https://alpinegizmo.github.io/flink-docs//page/favicon.ico" type="image/x-icon">
     <link rel="icon" href="https://alpinegizmo.github.io/flink-docs//page/favicon.ico" type="image/x-icon">
 
@@ -57,14 +57,6 @@ under the License.
 
 
 
-
-  
-    
-    
-    
-      
-    
-  
 
   
     
@@ -548,7 +540,7 @@ under the License.
       
         
         
-<li><a href="#collapse-24" data-toggle="collapse" class="active">Streaming (DataStream API)</a><div class="collapse in" id="collapse-24"><ul>
+<li><a href="#collapse-24" data-toggle="collapse">Streaming (DataStream API) <i class="fa fa-caret-down pull-right" aria-hidden="true" style="padding-top: 4px"></i></a><div class="collapse" id="collapse-24"><ul>
   <li><a href="https://alpinegizmo.github.io/flink-docs//dev/datastream_api.html">Overview</a></li>
         
         
@@ -670,7 +662,7 @@ under the License.
       
         
         
-<li><a href="#collapse-30" data-toggle="collapse" class="active">Connectors</a><div class="collapse in" id="collapse-30"><ul>
+<li><a href="#collapse-30" data-toggle="collapse">Connectors <i class="fa fa-caret-down pull-right" aria-hidden="true" style="padding-top: 4px"></i></a><div class="collapse" id="collapse-30"><ul>
   <li><a href="https://alpinegizmo.github.io/flink-docs//dev/connectors/">Overview</a></li>
         
         
@@ -780,7 +772,7 @@ under the License.
 
     
     
-<li><a href="https://alpinegizmo.github.io/flink-docs//dev/connectors/elasticsearch2.html" class="active">Elasticsearch 2.x</a></li>
+<li><a href="https://alpinegizmo.github.io/flink-docs//dev/connectors/elasticsearch2.html">Elasticsearch 2.x</a></li>
     
   
 
@@ -1174,7 +1166,7 @@ under the License.
       
         
         
-<li><a href="#collapse-59" data-toggle="collapse">Managing Execution <i class="fa fa-caret-down pull-right" aria-hidden="true" style="padding-top: 4px"></i></a><div class="collapse" id="collapse-59"><ul>
+<li><a href="#collapse-59" data-toggle="collapse" class="active">Managing Execution</a><div class="collapse in" id="collapse-59"><ul>
   
         
         
@@ -1250,7 +1242,7 @@ under the License.
 
     
     
-<li><a href="https://alpinegizmo.github.io/flink-docs//dev/execution_plans.html">Execution Plans</a></li>
+<li><a href="https://alpinegizmo.github.io/flink-docs//dev/execution_plans.html" class="active">Execution Plans</a></li>
     
   
 
@@ -2342,14 +2334,6 @@ under the License.
     
     
       
-    
-  
-
-  
-  
-    
-    
-      
 
 
 
@@ -2362,170 +2346,76 @@ under the License.
 
   
   
-    <li><a href="https://alpinegizmo.github.io/flink-docs//dev/datastream_api.html">Streaming (DataStream API)</a></li>
+    <li>Managing Execution</li>
   
 
   
   
-    <li><a href="https://alpinegizmo.github.io/flink-docs//dev/connectors/">Connectors</a></li>
-  
-
-  
-  
-    <li class="active">Elasticsearch 2.x</li>
+    <li class="active">Execution Plans</li>
   
 
 </ol>
 
-<h1>Elasticsearch 2.x Connector</h1>
+<h1>Execution Plans</h1>
 
 
 
-<p>This connector provides a Sink that can write to an
-<a href="https://elastic.co/">Elasticsearch 2.x</a> Index. To use this connector, add the
-following dependency to your project:</p>
+<p>Depending on various parameters such as data size or number of machines in the cluster, Flink’s
+optimizer automatically chooses an execution strategy for your program. In many cases, it can be
+useful to know how exactly Flink will execute your program.</p>
 
-<figure class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
-  <span class="nt">&lt;groupId&gt;</span>org.apache.flink<span class="nt">&lt;/groupId&gt;</span>
-  <span class="nt">&lt;artifactId&gt;</span>flink-connector-elasticsearch2_2.10<span class="nt">&lt;/artifactId&gt;</span>
-  <span class="nt">&lt;version&gt;</span>1.2-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
-<span class="nt">&lt;/dependency&gt;</span></code></pre></figure>
+<p><strong>Plan Visualization Tool</strong></p>
 
-<p>Note that the streaming connectors are currently not part of the binary
-distribution. See
-<a href="https://alpinegizmo.github.io/flink-docs//dev/linking">here</a>
-for information about how to package the program with the libraries for
-cluster execution.</p>
+<p>Flink comes packaged with a visualization tool for execution plans. The HTML document containing
+the visualizer is located under <code>tools/planVisualizer.html</code>. It takes a JSON representation of
+the job execution plan and visualizes it as a graph with complete annotations of execution
+strategies.</p>
 
-<h4 id="installing-elasticsearch-2x">Installing Elasticsearch 2.x</h4>
-
-<p>Instructions for setting up an Elasticsearch cluster can be found
-<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/setup.html">here</a>.
-Make sure to set and remember a cluster name. This must be set when
-creating a Sink for writing to your cluster</p>
-
-<h4 id="elasticsearch-2x-sink">Elasticsearch 2.x Sink</h4>
-<p>The connector provides a Sink that can send data to an Elasticsearch 2.x Index.</p>
-
-<p>The sink communicates with Elasticsearch via Transport Client</p>
-
-<p>See <a href="https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/transport-client.html">here</a>
-for information about the Transport Client.</p>
-
-<p>The code below shows how to create a sink that uses a <code>TransportClient</code> for communication:</p>
+<p>The following code shows how to print the execution plan JSON from your program:</p>
 
 <div class="codetabs">
   <div data-lang="java">
 
-    <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="n">File</span> <span class="n">dataDir</span> <span class="o">=</span> <span class="o">....;</span>
+    <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">final</span> <span class="n">ExecutionEnvironment</span> <span class="n">env</span> <span class="o">=</span> <span class="n">ExecutionEnvironment</span><span class="o">.</span><span class="na">getExecutionEnvironment</span><span class="o">();</span>
 
-<span class="n">DataStream</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">input</span> <span class="o">=</span> <span class="o">...;</span>
+<span class="o">...</span>
 
-<span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">config</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
-<span class="c1">// This instructs the sink to emit after every element, otherwise they would be buffered</span>
-<span class="n">config</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&quot;bulk.flush.max.actions&quot;</span><span class="o">,</span> <span class="s">&quot;1&quot;</span><span class="o">);</span>
-<span class="n">config</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&quot;cluster.name&quot;</span><span class="o">,</span> <span class="s">&quot;my-cluster-name&quot;</span><span class="o">);</span>
-
-<span class="n">List</span><span class="o">&lt;</span><span class="n">InetSocketAddress</span><span class="o">&gt;</span> <span class="n">transports</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
-<span class="n">transports</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="nf">InetSocketAddress</span><span class="o">(</span><span class="n">InetAddress</span><span class="o">.</span><span class="na">getByName</span><span class="o">(</span><span class="s">&quot;127.0.0.1&quot;</span><span class="o">),</span> <span class="mi">9300</span><span class="o">));</span>
-<span class="n">transports</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="nf">InetSocketAddress</span><span class="o">(</span><span class="n">InetAddress</span><span class="o">.</span><span class="na">getByName</span><span class="o">(</span><span class="s">&quot;10.2.3.1&quot;</span><span class="o">),</span> <span class="mi">9300</span><span class="o">));</span>
-
-<span class="n">input</span><span class="o">.</span><span class="na">addSink</span><span class="o">(</span><span class="k">new</span> <span class="nf">ElasticsearchSink</span><span class="o">(</span><span class="n">config</span><span class="o">,</span> <span class="n">transports</span><span class="o">,</span> <span class="k">new</span> <span class="n">ElasticsearchSinkFunction</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;()</span> <span class="o">{</span>
-  <span class="kd">public</span> <span class="n">IndexRequest</span> <span class="nf">createIndexRequest</span><span class="o">(</span><span class="n">String</span> <span class="n">element</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">json</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
-    <span class="n">json</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&quot;data&quot;</span><span class="o">,</span> <span class="n">element</span><span class="o">);</span>
-
-    <span class="k">return</span> <span class="n">Requests</span><span class="o">.</span><span class="na">indexRequest</span><span class="o">()</span>
-            <span class="o">.</span><span class="na">index</span><span class="o">(</span><span class="s">&quot;my-index&quot;</span><span class="o">)</span>
-            <span class="o">.</span><span class="na">type</span><span class="o">(</span><span class="s">&quot;my-type&quot;</span><span class="o">)</span>
-            <span class="o">.</span><span class="na">source</span><span class="o">(</span><span class="n">json</span><span class="o">);</span>
-  <span class="o">}</span>
-
-  <span class="nd">@Override</span>
-  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">process</span><span class="o">(</span><span class="n">String</span> <span class="n">element</span><span class="o">,</span> <span class="n">RuntimeContext</span> <span class="n">ctx</span><span class="o">,</span> <span class="n">RequestIndexer</span> <span class="n">indexer</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">indexer</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">createIndexRequest</span><span class="o">(</span><span class="n">element</span><span class="o">));</span>
-  <span class="o">}</span>
-<span class="o">}));</span></code></pre></figure>
+<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">env</span><span class="o">.</span><span class="na">getExecutionPlan</span><span class="o">());</span></code></pre></figure>
 
   </div>
   <div data-lang="scala">
 
-    <figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">dataDir</span> <span class="k">=</span> <span class="o">....;</span>
+    <figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">env</span> <span class="k">=</span> <span class="nc">ExecutionEnvironment</span><span class="o">.</span><span class="n">getExecutionEnvironment</span>
 
-<span class="k">val</span> <span class="n">input</span><span class="k">:</span> <span class="kt">DataStream</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">...</span>
+<span class="o">...</span>
 
-<span class="k">val</span> <span class="n">config</span> <span class="k">=</span> <span class="k">new</span> <span class="n">util</span><span class="o">.</span><span class="nc">HashMap</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">String</span><span class="o">]</span>
-<span class="n">config</span><span class="o">.</span><span class="n">put</span><span class="o">(</span><span class="s">&quot;bulk.flush.max.actions&quot;</span><span class="o">,</span> <span class="s">&quot;1&quot;</span><span class="o">)</span>
-<span class="n">config</span><span class="o">.</span><span class="n">put</span><span class="o">(</span><span class="s">&quot;cluster.name&quot;</span><span class="o">,</span> <span class="s">&quot;my-cluster-name&quot;</span><span class="o">)</span>
-
-<span class="k">val</span> <span class="n">transports</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
-<span class="n">transports</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="k">new</span> <span class="nc">InetSocketAddress</span><span class="o">(</span><span class="nc">InetAddress</span><span class="o">.</span><span class="n">getByName</span><span class="o">(</span><span class="s">&quot;127.0.0.1&quot;</span><span class="o">),</span> <span class="mi">9300</span><span class="o">))</span>
-<span class="n">transports</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="k">new</span> <span class="nc">InetSocketAddress</span><span class="o">(</span><span class="nc">InetAddress</span><span class="o">.</span><span class="n">getByName</span><span class="o">(</span><span class="s">&quot;10.2.3.1&quot;</span><span class="o">),</span> <span class="mi">9300</span><span class="o">));</span>
-
-<span class="n">input</span><span class="o">.</span><span class="n">addSink</span><span class="o">(</span><span class="k">new</span> <span class="nc">ElasticsearchSink</span><span class="o">(</span><span class="n">config</span><span class="o">,</span> <span class="n">transports</span><span class="o">,</span> <span class="k">new</span> <span class="nc">ElasticsearchSinkFunction</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">createIndexRequest</span><span class="o">(</span><span class="n">element</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">IndexRequest</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">json</span> <span class="k">=</span> <span class="k">new</span> <span class="n">util</span><span class="o">.</span><span class="nc">HashMap</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">AnyRef</span><span class="o">]</span>
-    <span class="n">json</span><span class="o">.</span><span class="n">put</span><span class="o">(</span><span class="s">&quot;data&quot;</span><span class="o">,</span> <span class="n">element</span><span class="o">)</span>
-    <span class="nc">Requests</span><span class="o">.</span><span class="n">indexRequest</span><span class="o">.</span><span class="n">index</span><span class="o">(</span><span class="s">&quot;my-index&quot;</span><span class="o">).</span><span class="n">`type`</span><span class="o">(</span><span class="s">&quot;my-type&quot;</span><span class="o">).</span><span class="n">source</span><span class="o">(</span><span class="n">json</span><span class="o">)</span>
-  <span class="o">}</span>
-
-  <span class="k">override</span> <span class="k">def</span> <span class="n">process</span><span class="o">(</span><span class="n">element</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">ctx</span><span class="k">:</span> <span class="kt">RuntimeContext</span><span class="o">,</span> <span class="n">indexer</span><span class="k">:</span> <span class="kt">RequestIndexer</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">indexer</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="n">createIndexRequest</span><span class="o">(</span><span class="n">element</span><span class="o">))</span>
-  <span class="o">}</span>
-<span class="o">}))</span></code></pre></figure>
+<span class="n">println</span><span class="o">(</span><span class="n">env</span><span class="o">.</span><span class="n">getExecutionPlan</span><span class="o">())</span></code></pre></figure>
 
   </div>
 </div>
 
-<p>A Map of Strings is used to configure the Sink. The configuration keys
-are documented in the Elasticsearch documentation
-<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html">here</a>.
-Especially important is the <code>cluster.name</code>. parameter that must correspond to
-the name of your cluster and with ElasticSearch 2x you also need to specify <code>path.home</code>.</p>
+<p>To visualize the execution plan, do the following:</p>
 
-<p>Internally, the sink uses a <code>BulkProcessor</code> to send Action requests to the cluster.
-This will buffer elements and Action Requests before sending to the cluster. The behaviour of the
-<code>BulkProcessor</code> can be configured using these config keys:</p>
-<ul>
-  <li><strong>bulk.flush.max.actions</strong>: Maximum amount of elements to buffer</li>
-  <li><strong>bulk.flush.max.size.mb</strong>: Maximum amount of data (in megabytes) to buffer</li>
-  <li><strong>bulk.flush.interval.ms</strong>: Interval at which to flush data regardless of the other two
-  settings in milliseconds</li>
-</ul>
+<ol>
+  <li><strong>Open</strong> <code>planVisualizer.html</code> with your web browser,</li>
+  <li><strong>Paste</strong> the JSON string into the text field, and</li>
+  <li><strong>Press</strong> the draw button.</li>
+</ol>
 
-<p>This now provides a list of Elasticsearch Nodes
-to which the sink should connect via a <code>TransportClient</code>.</p>
+<p>After these steps, a detailed execution plan will be visualized.</p>
 
-<p>More information about Elasticsearch can be found <a href="https://elastic.co">here</a>.</p>
+<p><img alt="A flink job execution graph." src="https://alpinegizmo.github.io/flink-docs//fig/plan_visualizer.png" width="80%" /></p>
 
-<h4 id="packaging-the-elasticsearch-connector-into-an-uber-jar">Packaging the Elasticsearch Connector into an Uber-jar</h4>
+<p><strong>Web Interface</strong></p>
 
-<p>For the execution of your Flink program,
-it is recommended to build a so-called uber-jar (executable jar) containing all your dependencies
-(see <a href="https://alpinegizmo.github.io/flink-docs//dev/linking">here</a> for further information).</p>
+<p>Flink offers a web interface for submitting and executing jobs. The interface is part of the JobManager’s
+web interface for monitoring, per default running on port 8081. Job submission via this interfaces requires
+that you have set <code>jobmanager.web.submit.enable: true</code> in <code>flink-conf.yaml</code>.</p>
 
-<p>However,
-when an uber-jar containing an Elasticsearch sink is executed,
-an <code>IllegalArgumentException</code> may occur,
-which is caused by conflicting files of Elasticsearch and it’s dependencies
-in <code>META-INF/services</code>:</p>
+<p>You may specify program arguments before the job is executed. The plan visualization enables you to show
+the execution plan before executing the Flink job.</p>
 
-<div class="highlight"><pre><code>IllegalArgumentException[An SPI class of type org.apache.lucene.codecs.PostingsFormat with name 'Lucene50' does not exist.  You need to add the corresponding JAR file supporting this SPI to your classpath.  The current classpath supports the following names: [es090, completion090, XBloomFilter]]
-</code></pre></div>
-
-<p>If the uber-jar is build by means of maven,
-this issue can be avoided by adding the following bits to the pom file:</p>
-
-<div class="highlight"><pre><code>&lt;transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer"&gt;
-    &lt;resource&gt;META-INF/services/org.apache.lucene.codecs.Codec&lt;/resource&gt;
-&lt;/transformer&gt;
-&lt;transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer"&gt;
-    &lt;resource&gt;META-INF/services/org.apache.lucene.codecs.DocValuesFormat&lt;/resource&gt;
-&lt;/transformer&gt;
-&lt;transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer"&gt;
-   &lt;resource&gt;META-INF/services/org.apache.lucene.codecs.PostingsFormat&lt;/resource&gt;
-&lt;/transformer&gt;
-</code></pre></div>
+<p><a href="#top" class="top pull-right"><span class="glyphicon glyphicon-chevron-up"></span> Back to top</a></p>
 
 
         </div>

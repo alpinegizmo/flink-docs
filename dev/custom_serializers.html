@@ -24,7 +24,7 @@ under the License.
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Apache Flink 1.2-SNAPSHOT Documentation: Elasticsearch 2.x Connector</title>
+    <title>Apache Flink 1.2-SNAPSHOT Documentation: Register a custom serializer for your Flink program</title>
     <link rel="shortcut icon" href="https://alpinegizmo.github.io/flink-docs//page/favicon.ico" type="image/x-icon">
     <link rel="icon" href="https://alpinegizmo.github.io/flink-docs//page/favicon.ico" type="image/x-icon">
 
@@ -57,14 +57,6 @@ under the License.
 
 
 
-
-  
-    
-    
-    
-      
-    
-  
 
   
     
@@ -548,7 +540,7 @@ under the License.
       
         
         
-<li><a href="#collapse-24" data-toggle="collapse" class="active">Streaming (DataStream API)</a><div class="collapse in" id="collapse-24"><ul>
+<li><a href="#collapse-24" data-toggle="collapse">Streaming (DataStream API) <i class="fa fa-caret-down pull-right" aria-hidden="true" style="padding-top: 4px"></i></a><div class="collapse" id="collapse-24"><ul>
   <li><a href="https://alpinegizmo.github.io/flink-docs//dev/datastream_api.html">Overview</a></li>
         
         
@@ -670,7 +662,7 @@ under the License.
       
         
         
-<li><a href="#collapse-30" data-toggle="collapse" class="active">Connectors</a><div class="collapse in" id="collapse-30"><ul>
+<li><a href="#collapse-30" data-toggle="collapse">Connectors <i class="fa fa-caret-down pull-right" aria-hidden="true" style="padding-top: 4px"></i></a><div class="collapse" id="collapse-30"><ul>
   <li><a href="https://alpinegizmo.github.io/flink-docs//dev/connectors/">Overview</a></li>
         
         
@@ -780,7 +772,7 @@ under the License.
 
     
     
-<li><a href="https://alpinegizmo.github.io/flink-docs//dev/connectors/elasticsearch2.html" class="active">Elasticsearch 2.x</a></li>
+<li><a href="https://alpinegizmo.github.io/flink-docs//dev/connectors/elasticsearch2.html">Elasticsearch 2.x</a></li>
     
   
 
@@ -1118,7 +1110,7 @@ under the License.
       
         
         
-<li><a href="#collapse-56" data-toggle="collapse">Data Types & Serialization <i class="fa fa-caret-down pull-right" aria-hidden="true" style="padding-top: 4px"></i></a><div class="collapse" id="collapse-56"><ul>
+<li><a href="#collapse-56" data-toggle="collapse" class="active">Data Types & Serialization</a><div class="collapse in" id="collapse-56"><ul>
   <li><a href="https://alpinegizmo.github.io/flink-docs//dev/types_serialization.html">Overview</a></li>
         
         
@@ -1143,7 +1135,7 @@ under the License.
 
     
     
-<li><a href="https://alpinegizmo.github.io/flink-docs//dev/custom_serializers.html">Custom Serializers</a></li>
+<li><a href="https://alpinegizmo.github.io/flink-docs//dev/custom_serializers.html" class="active">Custom Serializers</a></li>
     
   
 
@@ -2342,14 +2334,6 @@ under the License.
     
     
       
-    
-  
-
-  
-  
-    
-    
-      
 
 
 
@@ -2362,170 +2346,90 @@ under the License.
 
   
   
-    <li><a href="https://alpinegizmo.github.io/flink-docs//dev/datastream_api.html">Streaming (DataStream API)</a></li>
+    <li><a href="https://alpinegizmo.github.io/flink-docs//dev/types_serialization.html">Data Types & Serialization</a></li>
   
 
   
   
-    <li><a href="https://alpinegizmo.github.io/flink-docs//dev/connectors/">Connectors</a></li>
-  
-
-  
-  
-    <li class="active">Elasticsearch 2.x</li>
+    <li class="active">Custom Serializers</li>
   
 
 </ol>
 
-<h1>Elasticsearch 2.x Connector</h1>
+<h1>Register a custom serializer for your Flink program</h1>
 
 
 
-<p>This connector provides a Sink that can write to an
-<a href="https://elastic.co/">Elasticsearch 2.x</a> Index. To use this connector, add the
-following dependency to your project:</p>
+<p>If you use a custom type in your Flink program which cannot be serialized by the
+Flink type serializer, Flink falls back to using the generic Kryo
+serializer. You may register your own serializer or a serialization system like
+Google Protobuf or Apache Thrift with Kryo. To do that, simply register the type
+class and the serializer in the <code>ExecutionConfig</code> of your Flink program.</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">final</span> <span class="n">ExecutionEnvironment</span> <span class="n">env</span> <span class="o">=</span> <span class="n">ExecutionEnvironment</span><span class="o">.</span><span class="na">getExecutionEnvironment</span><span class="o">();</span>
+
+<span class="c1">// register the class of the serializer as serializer for a type</span>
+<span class="n">env</span><span class="o">.</span><span class="na">getConfig</span><span class="o">().</span><span class="na">registerTypeWithKryoSerializer</span><span class="o">(</span><span class="n">MyCustomType</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">MyCustomSerializer</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+
+<span class="c1">// register an instance as serializer for a type</span>
+<span class="n">MySerializer</span> <span class="n">mySerializer</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">MySerializer</span><span class="o">();</span>
+<span class="n">env</span><span class="o">.</span><span class="na">getConfig</span><span class="o">().</span><span class="na">registerTypeWithKryoSerializer</span><span class="o">(</span><span class="n">MyCustomType</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">mySerializer</span><span class="o">);</span></code></pre></figure>
+
+<p>Note that your custom serializer has to extend Kryo’s Serializer class. In the
+case of Google Protobuf or Apache Thrift, this has already been done for
+you:</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">final</span> <span class="n">ExecutionEnvironment</span> <span class="n">env</span> <span class="o">=</span> <span class="n">ExecutionEnvironment</span><span class="o">.</span><span class="na">getExecutionEnvironment</span><span class="o">();</span>
+
+<span class="c1">// register the Google Protobuf serializer with Kryo</span>
+<span class="n">env</span><span class="o">.</span><span class="na">getConfig</span><span class="o">().</span><span class="na">registerTypeWithKryoSerializer</span><span class="o">(</span><span class="n">MyCustomType</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">ProtobufSerializer</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+
+<span class="c1">// register the serializer included with Apache Thrift as the standard serializer</span>
+<span class="c1">// TBaseSerializer states it should be initialized as a default Kryo serializer</span>
+<span class="n">env</span><span class="o">.</span><span class="na">getConfig</span><span class="o">().</span><span class="na">addDefaultKryoSerializer</span><span class="o">(</span><span class="n">MyCustomType</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">TBaseSerializer</span><span class="o">.</span><span class="na">class</span><span class="o">);</span></code></pre></figure>
+
+<p>For the above example to work, you need to include the necessary dependencies in
+your Maven project file (pom.xml). In the dependency section, add the following
+for Apache Thrift:</p>
 
 <figure class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
-  <span class="nt">&lt;groupId&gt;</span>org.apache.flink<span class="nt">&lt;/groupId&gt;</span>
-  <span class="nt">&lt;artifactId&gt;</span>flink-connector-elasticsearch2_2.10<span class="nt">&lt;/artifactId&gt;</span>
-  <span class="nt">&lt;version&gt;</span>1.2-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+	<span class="nt">&lt;groupId&gt;</span>com.twitter<span class="nt">&lt;/groupId&gt;</span>
+	<span class="nt">&lt;artifactId&gt;</span>chill-thrift<span class="nt">&lt;/artifactId&gt;</span>
+	<span class="nt">&lt;version&gt;</span>0.5.2<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+<span class="c">&lt;!-- libthrift is required by chill-thrift --&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+	<span class="nt">&lt;groupId&gt;</span>org.apache.thrift<span class="nt">&lt;/groupId&gt;</span>
+	<span class="nt">&lt;artifactId&gt;</span>libthrift<span class="nt">&lt;/artifactId&gt;</span>
+	<span class="nt">&lt;version&gt;</span>0.6.1<span class="nt">&lt;/version&gt;</span>
+	<span class="nt">&lt;exclusions&gt;</span>
+		<span class="nt">&lt;exclusion&gt;</span>
+			<span class="nt">&lt;groupId&gt;</span>javax.servlet<span class="nt">&lt;/groupId&gt;</span>
+			<span class="nt">&lt;artifactId&gt;</span>servlet-api<span class="nt">&lt;/artifactId&gt;</span>
+		<span class="nt">&lt;/exclusion&gt;</span>
+		<span class="nt">&lt;exclusion&gt;</span>
+			<span class="nt">&lt;groupId&gt;</span>org.apache.httpcomponents<span class="nt">&lt;/groupId&gt;</span>
+			<span class="nt">&lt;artifactId&gt;</span>httpclient<span class="nt">&lt;/artifactId&gt;</span>
+		<span class="nt">&lt;/exclusion&gt;</span>
+	<span class="nt">&lt;/exclusions&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span></code></pre></figure>
 
-<p>Note that the streaming connectors are currently not part of the binary
-distribution. See
-<a href="https://alpinegizmo.github.io/flink-docs//dev/linking">here</a>
-for information about how to package the program with the libraries for
-cluster execution.</p>
+<p>For Google Protobuf you need the following Maven dependency:</p>
 
-<h4 id="installing-elasticsearch-2x">Installing Elasticsearch 2.x</h4>
+<figure class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
+	<span class="nt">&lt;groupId&gt;</span>com.twitter<span class="nt">&lt;/groupId&gt;</span>
+	<span class="nt">&lt;artifactId&gt;</span>chill-protobuf<span class="nt">&lt;/artifactId&gt;</span>
+	<span class="nt">&lt;version&gt;</span>0.5.2<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+<span class="c">&lt;!-- We need protobuf for chill-protobuf --&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+	<span class="nt">&lt;groupId&gt;</span>com.google.protobuf<span class="nt">&lt;/groupId&gt;</span>
+	<span class="nt">&lt;artifactId&gt;</span>protobuf-java<span class="nt">&lt;/artifactId&gt;</span>
+	<span class="nt">&lt;version&gt;</span>2.5.0<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span></code></pre></figure>
 
-<p>Instructions for setting up an Elasticsearch cluster can be found
-<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/setup.html">here</a>.
-Make sure to set and remember a cluster name. This must be set when
-creating a Sink for writing to your cluster</p>
+<p>Please adjust the versions of both libraries as needed.</p>
 
-<h4 id="elasticsearch-2x-sink">Elasticsearch 2.x Sink</h4>
-<p>The connector provides a Sink that can send data to an Elasticsearch 2.x Index.</p>
-
-<p>The sink communicates with Elasticsearch via Transport Client</p>
-
-<p>See <a href="https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/transport-client.html">here</a>
-for information about the Transport Client.</p>
-
-<p>The code below shows how to create a sink that uses a <code>TransportClient</code> for communication:</p>
-
-<div class="codetabs">
-  <div data-lang="java">
-
-    <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="n">File</span> <span class="n">dataDir</span> <span class="o">=</span> <span class="o">....;</span>
-
-<span class="n">DataStream</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">input</span> <span class="o">=</span> <span class="o">...;</span>
-
-<span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">config</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
-<span class="c1">// This instructs the sink to emit after every element, otherwise they would be buffered</span>
-<span class="n">config</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&quot;bulk.flush.max.actions&quot;</span><span class="o">,</span> <span class="s">&quot;1&quot;</span><span class="o">);</span>
-<span class="n">config</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&quot;cluster.name&quot;</span><span class="o">,</span> <span class="s">&quot;my-cluster-name&quot;</span><span class="o">);</span>
-
-<span class="n">List</span><span class="o">&lt;</span><span class="n">InetSocketAddress</span><span class="o">&gt;</span> <span class="n">transports</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
-<span class="n">transports</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="nf">InetSocketAddress</span><span class="o">(</span><span class="n">InetAddress</span><span class="o">.</span><span class="na">getByName</span><span class="o">(</span><span class="s">&quot;127.0.0.1&quot;</span><span class="o">),</span> <span class="mi">9300</span><span class="o">));</span>
-<span class="n">transports</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="nf">InetSocketAddress</span><span class="o">(</span><span class="n">InetAddress</span><span class="o">.</span><span class="na">getByName</span><span class="o">(</span><span class="s">&quot;10.2.3.1&quot;</span><span class="o">),</span> <span class="mi">9300</span><span class="o">));</span>
-
-<span class="n">input</span><span class="o">.</span><span class="na">addSink</span><span class="o">(</span><span class="k">new</span> <span class="nf">ElasticsearchSink</span><span class="o">(</span><span class="n">config</span><span class="o">,</span> <span class="n">transports</span><span class="o">,</span> <span class="k">new</span> <span class="n">ElasticsearchSinkFunction</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;()</span> <span class="o">{</span>
-  <span class="kd">public</span> <span class="n">IndexRequest</span> <span class="nf">createIndexRequest</span><span class="o">(</span><span class="n">String</span> <span class="n">element</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">json</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
-    <span class="n">json</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&quot;data&quot;</span><span class="o">,</span> <span class="n">element</span><span class="o">);</span>
-
-    <span class="k">return</span> <span class="n">Requests</span><span class="o">.</span><span class="na">indexRequest</span><span class="o">()</span>
-            <span class="o">.</span><span class="na">index</span><span class="o">(</span><span class="s">&quot;my-index&quot;</span><span class="o">)</span>
-            <span class="o">.</span><span class="na">type</span><span class="o">(</span><span class="s">&quot;my-type&quot;</span><span class="o">)</span>
-            <span class="o">.</span><span class="na">source</span><span class="o">(</span><span class="n">json</span><span class="o">);</span>
-  <span class="o">}</span>
-
-  <span class="nd">@Override</span>
-  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">process</span><span class="o">(</span><span class="n">String</span> <span class="n">element</span><span class="o">,</span> <span class="n">RuntimeContext</span> <span class="n">ctx</span><span class="o">,</span> <span class="n">RequestIndexer</span> <span class="n">indexer</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">indexer</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">createIndexRequest</span><span class="o">(</span><span class="n">element</span><span class="o">));</span>
-  <span class="o">}</span>
-<span class="o">}));</span></code></pre></figure>
-
-  </div>
-  <div data-lang="scala">
-
-    <figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">dataDir</span> <span class="k">=</span> <span class="o">....;</span>
-
-<span class="k">val</span> <span class="n">input</span><span class="k">:</span> <span class="kt">DataStream</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">...</span>
-
-<span class="k">val</span> <span class="n">config</span> <span class="k">=</span> <span class="k">new</span> <span class="n">util</span><span class="o">.</span><span class="nc">HashMap</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">String</span><span class="o">]</span>
-<span class="n">config</span><span class="o">.</span><span class="n">put</span><span class="o">(</span><span class="s">&quot;bulk.flush.max.actions&quot;</span><span class="o">,</span> <span class="s">&quot;1&quot;</span><span class="o">)</span>
-<span class="n">config</span><span class="o">.</span><span class="n">put</span><span class="o">(</span><span class="s">&quot;cluster.name&quot;</span><span class="o">,</span> <span class="s">&quot;my-cluster-name&quot;</span><span class="o">)</span>
-
-<span class="k">val</span> <span class="n">transports</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
-<span class="n">transports</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="k">new</span> <span class="nc">InetSocketAddress</span><span class="o">(</span><span class="nc">InetAddress</span><span class="o">.</span><span class="n">getByName</span><span class="o">(</span><span class="s">&quot;127.0.0.1&quot;</span><span class="o">),</span> <span class="mi">9300</span><span class="o">))</span>
-<span class="n">transports</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="k">new</span> <span class="nc">InetSocketAddress</span><span class="o">(</span><span class="nc">InetAddress</span><span class="o">.</span><span class="n">getByName</span><span class="o">(</span><span class="s">&quot;10.2.3.1&quot;</span><span class="o">),</span> <span class="mi">9300</span><span class="o">));</span>
-
-<span class="n">input</span><span class="o">.</span><span class="n">addSink</span><span class="o">(</span><span class="k">new</span> <span class="nc">ElasticsearchSink</span><span class="o">(</span><span class="n">config</span><span class="o">,</span> <span class="n">transports</span><span class="o">,</span> <span class="k">new</span> <span class="nc">ElasticsearchSinkFunction</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">createIndexRequest</span><span class="o">(</span><span class="n">element</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">IndexRequest</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">json</span> <span class="k">=</span> <span class="k">new</span> <span class="n">util</span><span class="o">.</span><span class="nc">HashMap</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">AnyRef</span><span class="o">]</span>
-    <span class="n">json</span><span class="o">.</span><span class="n">put</span><span class="o">(</span><span class="s">&quot;data&quot;</span><span class="o">,</span> <span class="n">element</span><span class="o">)</span>
-    <span class="nc">Requests</span><span class="o">.</span><span class="n">indexRequest</span><span class="o">.</span><span class="n">index</span><span class="o">(</span><span class="s">&quot;my-index&quot;</span><span class="o">).</span><span class="n">`type`</span><span class="o">(</span><span class="s">&quot;my-type&quot;</span><span class="o">).</span><span class="n">source</span><span class="o">(</span><span class="n">json</span><span class="o">)</span>
-  <span class="o">}</span>
-
-  <span class="k">override</span> <span class="k">def</span> <span class="n">process</span><span class="o">(</span><span class="n">element</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">ctx</span><span class="k">:</span> <span class="kt">RuntimeContext</span><span class="o">,</span> <span class="n">indexer</span><span class="k">:</span> <span class="kt">RequestIndexer</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">indexer</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="n">createIndexRequest</span><span class="o">(</span><span class="n">element</span><span class="o">))</span>
-  <span class="o">}</span>
-<span class="o">}))</span></code></pre></figure>
-
-  </div>
-</div>
-
-<p>A Map of Strings is used to configure the Sink. The configuration keys
-are documented in the Elasticsearch documentation
-<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html">here</a>.
-Especially important is the <code>cluster.name</code>. parameter that must correspond to
-the name of your cluster and with ElasticSearch 2x you also need to specify <code>path.home</code>.</p>
-
-<p>Internally, the sink uses a <code>BulkProcessor</code> to send Action requests to the cluster.
-This will buffer elements and Action Requests before sending to the cluster. The behaviour of the
-<code>BulkProcessor</code> can be configured using these config keys:</p>
-<ul>
-  <li><strong>bulk.flush.max.actions</strong>: Maximum amount of elements to buffer</li>
-  <li><strong>bulk.flush.max.size.mb</strong>: Maximum amount of data (in megabytes) to buffer</li>
-  <li><strong>bulk.flush.interval.ms</strong>: Interval at which to flush data regardless of the other two
-  settings in milliseconds</li>
-</ul>
-
-<p>This now provides a list of Elasticsearch Nodes
-to which the sink should connect via a <code>TransportClient</code>.</p>
-
-<p>More information about Elasticsearch can be found <a href="https://elastic.co">here</a>.</p>
-
-<h4 id="packaging-the-elasticsearch-connector-into-an-uber-jar">Packaging the Elasticsearch Connector into an Uber-jar</h4>
-
-<p>For the execution of your Flink program,
-it is recommended to build a so-called uber-jar (executable jar) containing all your dependencies
-(see <a href="https://alpinegizmo.github.io/flink-docs//dev/linking">here</a> for further information).</p>
-
-<p>However,
-when an uber-jar containing an Elasticsearch sink is executed,
-an <code>IllegalArgumentException</code> may occur,
-which is caused by conflicting files of Elasticsearch and it’s dependencies
-in <code>META-INF/services</code>:</p>
-
-<div class="highlight"><pre><code>IllegalArgumentException[An SPI class of type org.apache.lucene.codecs.PostingsFormat with name 'Lucene50' does not exist.  You need to add the corresponding JAR file supporting this SPI to your classpath.  The current classpath supports the following names: [es090, completion090, XBloomFilter]]
-</code></pre></div>
-
-<p>If the uber-jar is build by means of maven,
-this issue can be avoided by adding the following bits to the pom file:</p>
-
-<div class="highlight"><pre><code>&lt;transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer"&gt;
-    &lt;resource&gt;META-INF/services/org.apache.lucene.codecs.Codec&lt;/resource&gt;
-&lt;/transformer&gt;
-&lt;transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer"&gt;
-    &lt;resource&gt;META-INF/services/org.apache.lucene.codecs.DocValuesFormat&lt;/resource&gt;
-&lt;/transformer&gt;
-&lt;transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer"&gt;
-   &lt;resource&gt;META-INF/services/org.apache.lucene.codecs.PostingsFormat&lt;/resource&gt;
-&lt;/transformer&gt;
-</code></pre></div>
 
 
         </div>

@@ -24,7 +24,7 @@ under the License.
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Apache Flink 1.2-SNAPSHOT Documentation: Programming Guide</title>
+    <title>Apache Flink 1.2-SNAPSHOT Documentation: Linking with Flink</title>
     <link rel="shortcut icon" href="https://alpinegizmo.github.io/flink-docs//page/favicon.ico" type="image/x-icon">
     <link rel="icon" href="https://alpinegizmo.github.io/flink-docs//page/favicon.ico" type="image/x-icon">
 
@@ -60,6 +60,25 @@ under the License.
 
   
     
+    
+    
+      
+    
+  
+
+  
+    
+    
+    
+      
+    
+  
+
+  
+    
+    
+    
+      
 
 
 
@@ -295,7 +314,7 @@ under the License.
       
         
         
-<li><a href="#collapse-12" data-toggle="collapse"><i class="fa fa-code title maindish" aria-hidden="true"></i> Application Development <i class="fa fa-caret-down pull-right" aria-hidden="true" style="padding-top: 4px"></i></a><div class="collapse" id="collapse-12"><ul>
+<li><a href="#collapse-12" data-toggle="collapse" class="active"><i class="fa fa-code title maindish" aria-hidden="true"></i> Application Development</a><div class="collapse in" id="collapse-12"><ul>
   
         
         
@@ -324,7 +343,7 @@ under the License.
       
         
         
-<li><a href="#collapse-13" data-toggle="collapse">Installation & Setup <i class="fa fa-caret-down pull-right" aria-hidden="true" style="padding-top: 4px"></i></a><div class="collapse" id="collapse-13"><ul>
+<li><a href="#collapse-13" data-toggle="collapse" class="active">Installation & Setup</a><div class="collapse in" id="collapse-13"><ul>
   
         
         
@@ -349,7 +368,7 @@ under the License.
 
     
     
-<li><a href="https://alpinegizmo.github.io/flink-docs//dev/linking_with_flink.html">Linking with Flink</a></li>
+<li><a href="https://alpinegizmo.github.io/flink-docs//dev/linking_with_flink.html" class="active">Linking with Flink</a></li>
     
   
 
@@ -2307,11 +2326,176 @@ under the License.
 
           
 
-<meta http-equiv="refresh" content="1; url=https://alpinegizmo.github.io/flink-docs//dev/batch/index.html" />
 
-<h1>Page 'Programming Guide' Has Moved</h1>
 
-The <strong>Programming Guide</strong> has been moved. Redirecting to <a href="https://alpinegizmo.github.io/flink-docs///dev/batch/index.html">https://alpinegizmo.github.io/flink-docs//dev/batch/index.html</a> in 1 second.
+
+
+  
+  
+    
+    
+      
+    
+  
+
+  
+  
+    
+    
+      
+    
+  
+
+  
+  
+    
+    
+      
+
+
+
+<ol class="breadcrumb">
+
+  
+  
+    <li><i class="fa fa-code title maindish" aria-hidden="true"></i> Application Development</li>
+  
+
+  
+  
+    <li>Installation & Setup</li>
+  
+
+  
+  
+    <li class="active">Linking with Flink</li>
+  
+
+</ol>
+
+<h1>Linking with Flink</h1>
+
+
+
+<p>To write programs with Flink, you need to include the Flink library corresponding to
+your programming language in your project.</p>
+
+<p>The simplest way to do this is to use one of the quickstart scripts: either for
+<a href="https://alpinegizmo.github.io/flink-docs//quickstart/java_api_quickstart.html">Java</a> or for <a href="https://alpinegizmo.github.io/flink-docs//quickstart/scala_api_quickstart.html">Scala</a>. They
+create a blank project from a template (a Maven Archetype), which sets up everything for you. To
+manually create the project, you can use the archetype and create a project by calling:</p>
+
+<div class="codetabs">
+  <div data-lang="java">
+
+    <figure class="highlight"><pre><code class="language-bash" data-lang="bash">mvn archetype:generate <span class="se">\</span>
+    -DarchetypeGroupId<span class="o">=</span>org.apache.flink <span class="se">\</span>
+    -DarchetypeArtifactId<span class="o">=</span>flink-quickstart-java <span class="se">\</span>
+    -DarchetypeVersion<span class="o">=</span>1.2-SNAPSHOT</code></pre></figure>
+
+  </div>
+  <div data-lang="scala">
+
+    <figure class="highlight"><pre><code class="language-bash" data-lang="bash">mvn archetype:generate <span class="se">\</span>
+    -DarchetypeGroupId<span class="o">=</span>org.apache.flink <span class="se">\</span>
+    -DarchetypeArtifactId<span class="o">=</span>flink-quickstart-scala <span class="se">\</span>
+    -DarchetypeVersion<span class="o">=</span>1.2-SNAPSHOT</code></pre></figure>
+
+  </div>
+</div>
+
+<p>The archetypes are working for stable releases and preview versions (<code>-SNAPSHOT</code>).</p>
+
+<p>If you want to add Flink to an existing Maven project, add the following entry to your
+<em>dependencies</em> section in the <em>pom.xml</em> file of your project:</p>
+
+<div class="codetabs">
+  <div data-lang="java">
+
+    <figure class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="c">&lt;!-- Use this dependency if you are using the DataStream API --&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+  <span class="nt">&lt;groupId&gt;</span>org.apache.flink<span class="nt">&lt;/groupId&gt;</span>
+  <span class="nt">&lt;artifactId&gt;</span>flink-streaming-java_2.10<span class="nt">&lt;/artifactId&gt;</span>
+  <span class="nt">&lt;version&gt;</span>1.2-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+<span class="c">&lt;!-- Use this dependency if you are using the DataSet API --&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+  <span class="nt">&lt;groupId&gt;</span>org.apache.flink<span class="nt">&lt;/groupId&gt;</span>
+  <span class="nt">&lt;artifactId&gt;</span>flink-java<span class="nt">&lt;/artifactId&gt;</span>
+  <span class="nt">&lt;version&gt;</span>1.2-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+  <span class="nt">&lt;groupId&gt;</span>org.apache.flink<span class="nt">&lt;/groupId&gt;</span>
+  <span class="nt">&lt;artifactId&gt;</span>flink-clients_2.10<span class="nt">&lt;/artifactId&gt;</span>
+  <span class="nt">&lt;version&gt;</span>1.2-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span></code></pre></figure>
+
+  </div>
+  <div data-lang="scala">
+
+    <figure class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="c">&lt;!-- Use this dependency if you are using the DataStream API --&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+  <span class="nt">&lt;groupId&gt;</span>org.apache.flink<span class="nt">&lt;/groupId&gt;</span>
+  <span class="nt">&lt;artifactId&gt;</span>flink-streaming-scala_2.10<span class="nt">&lt;/artifactId&gt;</span>
+  <span class="nt">&lt;version&gt;</span>1.2-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+<span class="c">&lt;!-- Use this dependency if you are using the DataSet API --&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+  <span class="nt">&lt;groupId&gt;</span>org.apache.flink<span class="nt">&lt;/groupId&gt;</span>
+  <span class="nt">&lt;artifactId&gt;</span>flink-scala_2.10<span class="nt">&lt;/artifactId&gt;</span>
+  <span class="nt">&lt;version&gt;</span>1.2-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+  <span class="nt">&lt;groupId&gt;</span>org.apache.flink<span class="nt">&lt;/groupId&gt;</span>
+  <span class="nt">&lt;artifactId&gt;</span>flink-clients_2.10<span class="nt">&lt;/artifactId&gt;</span>
+  <span class="nt">&lt;version&gt;</span>1.2-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span></code></pre></figure>
+
+    <p><strong>Important:</strong> When working with the Scala API you must have one of these two imports:</p>
+
+    <figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">import</span> <span class="nn">org.apache.flink.api.scala._</span></code></pre></figure>
+
+    <p>or</p>
+
+    <figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">import</span> <span class="nn">org.apache.flink.api.scala.createTypeInformation</span></code></pre></figure>
+
+    <p>The reason is that Flink analyzes the types that are used in a program and generates serializers
+and comparaters for them. By having either of those imports you enable an implicit conversion
+that creates the type information for Flink operations.</p>
+
+    <p>If you would rather use SBT, see <a href="https://alpinegizmo.github.io/flink-docs//quickstart/scala_api_quickstart.html#sbt">here</a>.</p>
+  </div>
+</div>
+
+<h4 id="scala-dependency-versions">Scala Dependency Versions</h4>
+
+<p>Because Scala 2.10 binary is not compatible with Scala 2.11 binary, we provide multiple artifacts
+to support both Scala versions.</p>
+
+<p>Starting from the 0.10 line, we cross-build all Flink modules for both 2.10 and 2.11. If you want
+to run your program on Flink with Scala 2.11, you need to add a <code>_2.11</code> suffix to the <code>artifactId</code>
+values of the Flink modules in your dependencies section.</p>
+
+<p>If you are looking for building Flink with Scala 2.11, please check
+<a href="https://alpinegizmo.github.io/flink-docs//setup/building.html#scala-versions">build guide</a>.</p>
+
+<h4 id="hadoop-dependency-versions">Hadoop Dependency Versions</h4>
+
+<p>If you are using Flink together with Hadoop, the version of the dependency may vary depending on the
+version of Hadoop (or more specifically, HDFS) that you want to use Flink with. Please refer to the
+<a href="http://flink.apache.org/downloads.html">downloads page</a> for a list of available versions, and instructions
+on how to link with custom versions of Hadoop.</p>
+
+<p>In order to link against the latest SNAPSHOT versions of the code, please follow
+<a href="http://flink.apache.org/how-to-contribute.html#snapshots-nightly-builds">this guide</a>.</p>
+
+<p>The <em>flink-clients</em> dependency is only necessary to invoke the Flink program locally (for example to
+run it standalone for testing and debugging).  If you intend to only export the program as a JAR
+file and <a href="https://alpinegizmo.github.io/flink-docs//dev/cluster_execution.html">run it on a cluster</a>, you can skip that dependency.</p>
+
+<p><a href="#top" class="top pull-right"><span class="glyphicon glyphicon-chevron-up"></span> Back to top</a></p>
+
+
 
         </div>
       </div>

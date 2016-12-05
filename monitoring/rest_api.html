@@ -2397,8 +2397,6 @@ This monitoring API is used by Flink’s own dashboard, but is designed to be us
 
 <p>In the case of multiple JobManagers (for high availability), each JobManager will run its own instance of the monitoring API, which offers information about completed and running job while that JobManager was elected the cluster leader.</p>
 
-<p><strong>NOTE:</strong> Currently, the monitoring API is started together with the new web dashboard. To enable it, one need to add the following entry to the <code>flink-conf.yaml</code> in order to activate the new dashboard instead of the old dashboard: <code>jobmanager.new-web-frontend: true</code></p>
-
 <h2 id="developing">Developing</h2>
 
 <p>The REST API backend is in the <code>flink-runtime-web</code> project. The core class is <code>org.apache.flink.runtime.webmonitor.WebRuntimeMonitor</code>, which sets up the server and the request routing.</p>
